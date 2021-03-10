@@ -1,0 +1,26 @@
+<div class="grid-container">
+    <div class="login-form">
+        <div class="logo">
+            <img class="logo-style" src="assets/sports-logo.png" alt="" />
+        </div>
+        <form class="form" [formGroup]="loginForm">  
+        <!-- <div class="form"> -->
+            <div class="input-boxes">
+                <input placeholder="Email" type="text" formControlName="userName" name="username">
+
+            </div>
+            <div class="input-boxes">
+                <input placeholder="Password" type="text" formControlName="password" name="password">
+            </div>
+            <div class="log-form-btn">
+                <button class="btn-default" (click) = "login()" type="button">Login</button>
+                <button type="button" disabled class="btn-outline">SignUp</button>
+            </div>
+        <!-- </div> -->
+    </form>
+    </div>
+    
+    <div class="image">
+        <img class="main-backgroung-img" src="assets/sports-back-1.jpg" alt="" />
+    </div>
+</div>

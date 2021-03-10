@@ -1,0 +1,118 @@
+.item1 { 
+    grid-area: header; 
+    grid-area: 1 / 2 / 1 / 7;
+    height: 2rem;
+    box-shadow: 0 0.2rem 0.4rem 0 #e8ecf8;
+    position: fixed;
+    top: 0;
+    left: 15.5rem;
+    right: 0;
+    z-index: 10;
+    background: #fff;
+    padding: .8rem 3.6rem;
+    text-align: right;}
+.item2 { grid-area: menu; 
+    grid-area: 1 / 1 / 9 / 1;
+    background: linear-gradient(
+        180deg
+        ,#0a0a5f 8%,#183590 85%);
+    }
+.item3 { 
+    grid-area: main; 
+    grid-area: 2 / 2 / 8 / 7;
+    justify-content: center;
+    display: flex;
+    }
+.item4 { grid-area: footer;
+    grid-area: 8 / 2 / 8 / 7; }
+
+.grid-container {
+    display: grid;
+    grid-template-areas:
+        "menu header header header header header"
+        "menu main main main main main "
+        "menu footer footer footer footer footer";
+    grid-template-rows: 5rem;
+    grid-gap: 0.4rem;
+    // background-color: #2196F3;
+    padding: 0rem 1rem 0rem 0rem;
+    height: 99.8%;
+    
+}
+
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+}
+html,
+body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	background: linear-gradient(45deg, #49a09d, #5f2c82);
+	font-family: sans-serif;
+	font-weight: 100;
+}
+
+.container {
+    display: flex;
+    width: 81%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    height: 100%;
+    box-shadow: 0 0 20px rgb(0 0 0 / 10%);
+}
+
+th,
+td {
+	padding: 15px;
+	background-color: rgba(255,255,255,0.2);
+	color: black;
+}
+
+
+thead {
+    background-color: #e8ecf8;
+	th {
+        font-size: 0.6em;
+        font-family: "Open Sans Regular";
+	}
+}
+
+tbody {
+    position: relative;
+    font-size: 0.7em;
+	tr {
+		&:hover {
+            font-family: "Open Sans Regular";
+            color: #333;
+		}
+	}
+	td {
+		position: relative;
+        font-size: 0.7em;
+		&:hover {
+			&:before {
+				content: "";
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: -9999px;
+				bottom: -9999px;
+				background-color: rgba(255,255,255,0.2);
+				z-index: -1;
+			}
+		}
+	}
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}

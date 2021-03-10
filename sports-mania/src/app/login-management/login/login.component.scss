@@ -1,0 +1,122 @@
+.grid-container {
+    display: grid;
+    grid-template-rows: 20% 80%;
+    // grid-gap: 10px;  
+    // background-color: #2196F3;
+    // padding-top: 10px;
+    height: 100%;
+  }
+  
+  .grid-container > div {   
+    text-align: center;
+    // padding: 20px 0;
+    font-size: 30px;
+    justify-content: space-between;
+  }
+
+  .login-form {
+    // background-color: yellow;
+    display: flex;
+  }
+
+  .logo{
+    display: flex;
+    flex-basis: 20%;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+  }
+.logo-style{
+    height: 96px;
+}
+
+
+.main-backgroung-img{
+    width: 100%;
+    height: 100%;
+}
+//   .image{
+//     background-color: red;
+//   }
+input{
+    border: 1px solid #fff;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    /* height: 4rem; */
+    width: 85%;
+    /* background: #e6eaf7; */
+    font-weight: 300;
+    color: #666;
+    background: 0 0;
+    border-radius: .5rem;
+
+}
+.input-boxes{
+    background: #e6eaf7;
+    border-radius: 5px; 
+    box-shadow: 0 0 10px 0 rgb(199 34 42 / 26%);
+}
+
+
+.btn-default{
+    font-size: 0.95rem;
+    /* margin-left: 20px; */
+    /* line-height: 2.2rem; */
+    padding: 0.9rem 2.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    border-radius: 5px;
+    text-transform: uppercase;
+    background: #0a0a5f;
+    background: linear-gradient(
+271deg
+, #0a0a5f 0, #183590 100%);
+    filter: "progid: DXImageTransform.Microsoft.gradient(startColorstr=" #0a0a5f ", endColorstr=" #183590 ", GradientType=1)";
+    background-image: linear-gradient(
+97deg
+, #1c429e 3%, #0a0a5f 87%);
+}
+
+.btn-outline{
+    font-size: 0.95rem;
+    padding: .8rem 1.6rem;
+    border-radius: .5rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: #0a0a5f;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: unset;
+    border: unset;
+}
+
+.log-form-btn{
+display: flex;
+flex-direction: column;
+align-self: end;
+padding-bottom: 9px;
+}
+.form{
+    flex-basis: 78%;
+    display: grid;
+    align-items: center;
+    justify-content: flex-end;
+}
+@media only screen and (max-width: 480px) {
+.grid-container {
+        grid-template-rows: 33% 80%;
+}
+.form {
+    padding-top: 0.2rem;
+    grid-template-rows: auto auto auto auto;
+    grid-row-gap: 12px;
+}
+}
+@media only screen and (min-width: 481px) {
+.form{
+
+    grid-template-columns: auto auto auto auto;
+    grid-column-gap: 40px;
+}
+}
