@@ -1,3 +1,5 @@
+@import '../../../styles.scss';
+
 .grid-container {
     display: grid;
     grid-template-rows: 20% 80%;
@@ -39,20 +41,20 @@
 //     background-color: red;
 //   }
 input{
-    border: 1px solid #fff;
+    border: 1px solid $background-color-white;
     padding: 1rem 1.2rem;
     font-size: 1rem;
     /* height: 4rem; */
     width: 85%;
     /* background: #e6eaf7; */
     font-weight: 300;
-    color: #666;
+    color: $input-background-border ;
     background: 0 0;
     border-radius: .5rem;
 
 }
 .input-boxes{
-    background: #e6eaf7;
+    background: $input-background-color;
     border-radius: 5px; 
     box-shadow: 0 0 10px 0 rgb(199 34 42 / 26%);
 }
@@ -65,26 +67,26 @@ input{
     padding: 0.9rem 2.5rem;
     font-weight: 600;
     cursor: pointer;
-    color: white;
+    color: $background-color-white;
     border-radius: 5px;
     text-transform: uppercase;
-    background: #0a0a5f;
+    background: $button-background-color;
     background: linear-gradient(
 271deg
-, #0a0a5f 0, #183590 100%);
-    filter: "progid: DXImageTransform.Microsoft.gradient(startColorstr=" #0a0a5f ", endColorstr=" #183590 ", GradientType=1)";
+, $button-background-color 0, #183590 100%);
+    filter: "progid: DXImageTransform.Microsoft.gradient(startColorstr=" $button-background-color ", endColorstr=" #183590 ", GradientType=1)";
     background-image: linear-gradient(
 97deg
-, #1c429e 3%, #0a0a5f 87%);
+, #1c429e 3%, $button-background-color 87%);
 }
 
 .btn-outline{
     font-size: 0.95rem;
     padding: .8rem 1.6rem;
-    border-radius: .5rem;
+    border-radius: 0.5rem;
     text-transform: uppercase;
     cursor: pointer;
-    color: #0a0a5f;
+    color: $button-background-color;
     font-weight: 700;
     text-transform: uppercase;
     background-color: unset;

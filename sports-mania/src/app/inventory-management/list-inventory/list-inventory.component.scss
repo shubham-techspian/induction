@@ -1,14 +1,16 @@
+@import '../../../styles.scss';
+
 .item1 { 
     grid-area: header; 
     grid-area: 1 / 2 / 1 / 7;
     height: 1rem;
-    box-shadow: 0 0.2rem 0.4rem 0 #e8ecf8;
+    box-shadow: 0 0.2rem 0.4rem 0 $box-shadow-color;
     position: fixed;
     top: 0;
     left: 15.2rem;
     right: 0;
     z-index: 10;
-    background: #fff;
+    background: $background-color-white;
     padding: .8rem 3.6rem;
     text-align: right;
 }
@@ -17,7 +19,7 @@
     grid-area: 1 / 1 / 9 / 1;
     background: linear-gradient(
         180deg
-        ,#0a0a5f 8%,#183590 85%);
+        ,$button-background-color 8%,#183590 85%);
     }
 .item3 { 
     grid-area: 2/2/8/7;
@@ -57,7 +59,7 @@ body {
 body {
 	margin: 0;
 	background: linear-gradient(45deg, #49a09d, #5f2c82);
-	font-family: sans-serif;
+	font-family: $font-family;
 	font-weight: 100;
 }
 
@@ -77,15 +79,15 @@ th,
 td {
 	padding: 15px;
 	background-color: rgba(255,255,255,0.2);
-	color: black;
+	color: $black;
 }
 
 
 thead {
-    background-color: #e8ecf8;
+    background-color: $box-shadow-color;
 	th {
         font-size: 0.6em;
-        font-family: "Open Sans Regular";
+        font-family: $font-family;
 	}
 }
 
@@ -94,8 +96,8 @@ tbody {
     font-size: 0.7em;
 	tr {
 		&:hover {
-            font-family: "Open Sans Regular";
-            color: #333;
+            font-family: $font-family;
+            color: $tr-color;
 		}
 	}
 	td {
@@ -116,7 +118,7 @@ tbody {
 	}
 }
 tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: $even-row-background-off-white;
 }
 
 .icons {
