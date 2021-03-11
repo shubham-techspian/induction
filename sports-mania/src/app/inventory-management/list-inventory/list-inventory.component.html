@@ -1,60 +1,48 @@
-
 <div class="grid-container">
-  <div class="item1">Header</div>
-  <div class="item2">Menu</div>
-  <div class="item3">
-    <div class="container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>    
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                </tr>
-                <tr>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                </tr>
-                <tr>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                </tr>
-                <tr>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                </tr>
-                <tr>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="item1">
+        <app-header></app-header>
     </div>
+    <div class="item2">Menu</div>
+    <div class="item3">
 
-    
-  </div>  
-  <div class="item4">Footer</div>
+        <div class="container">
+            <div class="title">
+                Inventory List
+            </div>
+            <div>
+                <app-button [disabled] = 'disabled' [color] = 'color' [text] = 'text'></app-button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of sportsInventory">
+                        <td> {{item.item_name}}</td>
+                        <td>{{item.item_type}}</td>
+                        <td>{{item.Quantity}}</td>
+                        <td> {{item.Price}}</td>
+                        <td>
+                            <span class="icons">
+                                <img class="edit-delete" src="assets/edit.png" alt="" />
+                            </span>
+                            <span>
+                                <img class="edit-delete" src="assets/delete.png" alt="" />
+                            </span>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+    <div class="item4">Footer</div>
 </div>

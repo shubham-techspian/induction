@@ -1,16 +1,18 @@
 .item1 { 
     grid-area: header; 
     grid-area: 1 / 2 / 1 / 7;
-    height: 2rem;
+    height: 1rem;
     box-shadow: 0 0.2rem 0.4rem 0 #e8ecf8;
     position: fixed;
     top: 0;
-    left: 15.5rem;
+    left: 15.2rem;
     right: 0;
     z-index: 10;
     background: #fff;
     padding: .8rem 3.6rem;
-    text-align: right;}
+    text-align: right;
+}
+
 .item2 { grid-area: menu; 
     grid-area: 1 / 1 / 9 / 1;
     background: linear-gradient(
@@ -18,13 +20,14 @@
         ,#0a0a5f 8%,#183590 85%);
     }
 .item3 { 
-    grid-area: main; 
-    grid-area: 2 / 2 / 8 / 7;
-    justify-content: center;
-    display: flex;
+    grid-area: 2/2/8/7;
+    padding-left: 3rem !important;
+    display: grid;
     }
 .item4 { grid-area: footer;
-    grid-area: 8 / 2 / 8 / 7; }
+    grid-area: 8 / 2 / 8 / 7; 
+    padding: 0rem !important;
+}
 
 .grid-container {
     display: grid;
@@ -41,10 +44,10 @@
 }
 
 .grid-container > div {
-  background-color: rgba(255, 255, 255, 0.8);
-  text-align: center;
-  padding: 20px 0;
-  font-size: 30px;
+    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding: 20px 0;
+    font-size: 30px;
 }
 html,
 body {
@@ -59,12 +62,11 @@ body {
 }
 
 .container {
-    display: flex;
-    width: 81%;
+    display: grid;
 }
 
 table {
-    width: 100%;
+    width: 90%;
     border-collapse: collapse;
     overflow: hidden;
     height: 100%;
@@ -115,4 +117,19 @@ tbody {
 }
 tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+.icons {
+    padding-right: 0.7rem;
+
+    }
+    .edit-delete {
+        height: 25px;
+        width: 20px;
+    }
+
+.title{
+    font-weight: 500;
+    display: grid;
+    justify-content: flex-start;
 }

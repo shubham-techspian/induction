@@ -1,0 +1,2709 @@
+{
+    "pipes": [],
+    "interfaces": [
+        {
+            "name": "LoginDataState",
+            "id": "interface-LoginDataState-a870dcd7d8c4f46277af5bb1645e5107",
+            "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+            "type": "interface",
+            "sourceCode": "import * as fromLoginData from '../actions/login-management.action';\r\nimport { LoginDataModel } from '../../models';\r\n\r\nexport interface LoginDataState {\r\n    isLoginDataLoading: boolean;\r\n    isLoginDataLoaded: boolean;\r\n    loginData: LoginDataModel;\r\n}\r\n\r\nexport const initialState: LoginDataState = {\r\n    isLoginDataLoading: false,\r\n    isLoginDataLoaded: false,\r\n    loginData: new LoginDataModel(),\r\n};\r\n\r\nexport function reducer(\r\n    state = initialState,\r\n    action: fromLoginData.LoginManagementAction):\r\n    LoginDataState {\r\n    switch (action.type) {\r\n\r\n        case fromLoginData.LOGIN_DATA: {\r\n            return {\r\n                ...state,\r\n                isLoginDataLoading: true,\r\n                isLoginDataLoaded: false,\r\n            };\r\n        }\r\n\r\n        case fromLoginData.LOGIN_DATA_SUCCESS: {\r\n            const data = new LoginDataModel();\r\n            console.log(action.payload)\r\n            data.setId(action.payload.id);\r\n            data.setToken(action.payload.token);\r\n            return {\r\n                ...state,\r\n                isLoginDataLoading: false,\r\n                isLoginDataLoaded: true,\r\n                loginData: data,\r\n            };\r\n        }\r\n\r\n        case fromLoginData.LOGIN_DATA_FAIL: {\r\n            return {\r\n                ...state,\r\n                isLoginDataLoading: false,\r\n                isLoginDataLoaded: true,\r\n            };\r\n        }\r\n\r\n    }\r\n    return state;\r\n}\r\n\r\nexport const LoginDataLoaded = (state: LoginDataState) => state.isLoginDataLoaded;\r\nexport const LoginDataStateDataLoading = (state: LoginDataState) => state.isLoginDataLoading;\r\nexport const LoginDataStateData = (state: LoginDataState) => state.loginData;\r\n\r\n",
+            "properties": [
+                {
+                    "name": "isLoginDataLoaded",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 6
+                },
+                {
+                    "name": "isLoginDataLoading",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 5
+                },
+                {
+                    "name": "loginData",
+                    "type": "LoginDataModel",
+                    "optional": false,
+                    "description": "",
+                    "line": 7
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        },
+        {
+            "name": "LoginManagementDataState",
+            "id": "interface-LoginManagementDataState-ee9bff34894bb222ce1bfc7aed20c632",
+            "file": "src/app/login-management/store/reducers/index.ts",
+            "type": "interface",
+            "sourceCode": "import {\r\n    ActionReducer,\r\n    ActionReducerMap,\r\n    createFeatureSelector,\r\n    createSelector,\r\n    MetaReducer\r\n} from '@ngrx/store';\r\n\r\nimport * as fromLoginData from './login-management-reducer';\r\nimport { environment } from 'src/environments/environment';\r\nexport interface LoginManagementDataState {\r\n    login_data: fromLoginData.LoginDataState;\r\n}\r\nexport const reducers: ActionReducerMap<LoginManagementDataState> = {\r\n    login_data: fromLoginData.reducer,\r\n  };\r\nexport const metaReducers: MetaReducer<LoginManagementDataState>[] = !environment.production ? [] : [];\r\nexport const getCMSState = createFeatureSelector<LoginManagementDataState>('loginManagementData');\r\n",
+            "properties": [
+                {
+                    "name": "login_data",
+                    "type": "fromLoginData.LoginDataState",
+                    "optional": false,
+                    "description": "",
+                    "line": 12
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        }
+    ],
+    "injectables": [
+        {
+            "name": "LoginDataEffects",
+            "id": "injectable-LoginDataEffects-f581a6e8ab82acd19a686f647621958e",
+            "file": "src/app/login-management/store/effects/login-management-effect.ts",
+            "properties": [
+                {
+                    "name": "authenticateLoginData$",
+                    "defaultValue": "createEffect(\r\n    () => this.actions$\r\n        .pipe(\r\n            ofType<loginData.LoginData>(loginData.LOGIN_DATA),\r\n            switchMap((action) => {\r\n                return this.LoginDataService.authenticateUser().pipe(\r\n                    map(LoginData => new LoginDataSuccess(LoginData)),\r\n                    catchError(error => of(new loginData.LoginDataFail(error)))\r\n                );\r\n            })\r\n        )\r\n    )",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 18
+                }
+            ],
+            "methods": [],
+            "description": "",
+            "sourceCode": "import { Injectable } from '@angular/core';\r\nimport { createEffect , Actions, ofType } from '@ngrx/effects';\r\nimport * as loginData from '../actions/login-management.action';\r\nimport { map, switchMap, catchError, mergeMap } from 'rxjs/operators';\r\nimport { of } from 'rxjs';\r\nimport { LoginServiceService } from '../../services/login-service.service';\r\nimport {LoginDataSuccess} from '../actions/login-management.action';\r\n\r\n// const _loginData: any = loginData;\r\n@Injectable()\r\n\r\nexport class LoginDataEffects {\r\n    constructor(\r\n        private actions$: Actions,\r\n        private LoginDataService: LoginServiceService,\r\n    ) { }\r\n\r\n    authenticateLoginData$ = createEffect(\r\n    () => this.actions$\r\n        .pipe(\r\n            ofType<loginData.LoginData>(loginData.LOGIN_DATA),\r\n            switchMap((action) => {\r\n                return this.LoginDataService.authenticateUser().pipe(\r\n                    map(LoginData => new LoginDataSuccess(LoginData)),\r\n                    catchError(error => of(new loginData.LoginDataFail(error)))\r\n                );\r\n            })\r\n        )\r\n    )\r\n}\r\n",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [
+                    {
+                        "name": "actions$",
+                        "type": "Actions"
+                    },
+                    {
+                        "name": "LoginDataService",
+                        "type": "LoginServiceService"
+                    }
+                ],
+                "line": 12,
+                "jsdoctags": [
+                    {
+                        "name": "actions$",
+                        "type": "Actions",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "LoginDataService",
+                        "type": "LoginServiceService",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "type": "injectable"
+        },
+        {
+            "name": "LoginServiceService",
+            "id": "injectable-LoginServiceService-270a43dfa6495609f40e890ff1c2c669",
+            "file": "src/app/login-management/services/login-service.service.ts",
+            "properties": [
+                {
+                    "name": "loginPayload",
+                    "defaultValue": "{\n      userName: null,\n    }",
+                    "type": "object",
+                    "optional": false,
+                    "description": "",
+                    "line": 11
+                }
+            ],
+            "methods": [
+                {
+                    "name": "authenticateUser",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 25
+                },
+                {
+                    "name": "getUsername",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "string",
+                    "typeParameters": [],
+                    "line": 18
+                },
+                {
+                    "name": "setUsername",
+                    "args": [
+                        {
+                            "name": "userName",
+                            "type": "string"
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 22,
+                    "jsdoctags": [
+                        {
+                            "name": "userName",
+                            "type": "string",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "description": "",
+            "sourceCode": "import { Injectable } from '@angular/core';\nimport { HttpHeaders, HttpClient } from '@angular/common/http';\nimport { Observable, } from 'rxjs';\nimport { ROUTE_API_URL, HTTP_OPTIONS } from '../../shared/app-config';\n\n@Injectable({\n  providedIn: 'root'\n})\n\nexport class LoginServiceService {\n  loginPayload =\n    {\n      userName: null,\n    };\n\n  constructor(private http: HttpClient) { }\n\n  getUsername(): string {\n    return this.loginPayload.userName;\n  }\n\n  setUsername(userName: string) {\n    this.loginPayload.userName = userName;\n  }\n  authenticateUser() {\n    const id = 1\n    return this.http.get(ROUTE_API_URL.LOGIN_DATA_URL +'/'+id, HTTP_OPTIONS);\n  }\n}\n",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [
+                    {
+                        "name": "http",
+                        "type": "HttpClient"
+                    }
+                ],
+                "line": 14,
+                "jsdoctags": [
+                    {
+                        "name": "http",
+                        "type": "HttpClient",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "type": "injectable"
+        }
+    ],
+    "classes": [
+        {
+            "name": "AppPage",
+            "id": "class-AppPage-ee2067dfb1c303f41003aea7d82d51e0",
+            "file": "e2e/src/app.po.ts",
+            "type": "class",
+            "sourceCode": "import { browser, by, element } from 'protractor';\n\nexport class AppPage {\n  async navigateTo(): Promise<unknown> {\n    return browser.get(browser.baseUrl);\n  }\n\n  async getTitleText(): Promise<string> {\n    return element(by.css('app-root .content span')).getText();\n  }\n}\n",
+            "properties": [],
+            "methods": [
+                {
+                    "name": "getTitleText",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "Promise<string>",
+                    "typeParameters": [],
+                    "line": 8,
+                    "modifierKind": [
+                        120
+                    ]
+                },
+                {
+                    "name": "navigateTo",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "Promise<unknown>",
+                    "typeParameters": [],
+                    "line": 4,
+                    "modifierKind": [
+                        120
+                    ]
+                }
+            ],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": []
+        },
+        {
+            "name": "LoginData",
+            "id": "class-LoginData-46b07d3bb753723e85e3cf286691d22c",
+            "file": "src/app/login-management/store/actions/login-management.action.ts",
+            "type": "class",
+            "sourceCode": "import { Action } from '@ngrx/store';\r\n\r\nexport const LOGIN_DATA = 'LOGIN_DATA'; \r\nexport const LOGIN_DATA_SUCCESS = 'LOGIN_DATA_SUCCESS';\r\nexport const LOGIN_DATA_FAIL = 'LOGIN_DATA_FAIL';\r\n\r\nexport class LoginData implements Action {\r\n    readonly type = LOGIN_DATA;\r\n    constructor() { }\r\n}\r\n\r\nexport class LoginDataSuccess implements Action {\r\n    readonly type = 'LOGIN_DATA_SUCCESS';\r\n    constructor(public payload: any) { }\r\n}\r\n\r\nexport class LoginDataFail implements Action {\r\n    readonly type = LOGIN_DATA_FAIL;\r\n    constructor(public payload: any) { }\r\n}\r\n\r\n\r\nexport type LoginManagementAction = LoginData | LoginDataSuccess | LoginDataFail;\r\n",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [],
+                "line": 8
+            },
+            "properties": [
+                {
+                    "name": "type",
+                    "defaultValue": "LOGIN_DATA",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 8,
+                    "modifierKind": [
+                        132
+                    ]
+                }
+            ],
+            "methods": [],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "implements": [
+                "Action"
+            ]
+        },
+        {
+            "name": "LoginDataFail",
+            "id": "class-LoginDataFail-46b07d3bb753723e85e3cf286691d22c",
+            "file": "src/app/login-management/store/actions/login-management.action.ts",
+            "type": "class",
+            "sourceCode": "import { Action } from '@ngrx/store';\r\n\r\nexport const LOGIN_DATA = 'LOGIN_DATA'; \r\nexport const LOGIN_DATA_SUCCESS = 'LOGIN_DATA_SUCCESS';\r\nexport const LOGIN_DATA_FAIL = 'LOGIN_DATA_FAIL';\r\n\r\nexport class LoginData implements Action {\r\n    readonly type = LOGIN_DATA;\r\n    constructor() { }\r\n}\r\n\r\nexport class LoginDataSuccess implements Action {\r\n    readonly type = 'LOGIN_DATA_SUCCESS';\r\n    constructor(public payload: any) { }\r\n}\r\n\r\nexport class LoginDataFail implements Action {\r\n    readonly type = LOGIN_DATA_FAIL;\r\n    constructor(public payload: any) { }\r\n}\r\n\r\n\r\nexport type LoginManagementAction = LoginData | LoginDataSuccess | LoginDataFail;\r\n",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [
+                    {
+                        "name": "payload",
+                        "type": "any"
+                    }
+                ],
+                "line": 18,
+                "jsdoctags": [
+                    {
+                        "name": "payload",
+                        "type": "any",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "properties": [
+                {
+                    "name": "payload",
+                    "type": "any",
+                    "optional": false,
+                    "description": "",
+                    "line": 19,
+                    "modifierKind": [
+                        114
+                    ]
+                },
+                {
+                    "name": "type",
+                    "defaultValue": "LOGIN_DATA_FAIL",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 18,
+                    "modifierKind": [
+                        132
+                    ]
+                }
+            ],
+            "methods": [],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "implements": [
+                "Action"
+            ]
+        },
+        {
+            "name": "LoginDataModel",
+            "id": "class-LoginDataModel-bb48b6c76c7a45463adc07015eadeb3a",
+            "file": "src/app/login-management/models.ts",
+            "type": "class",
+            "sourceCode": "export class LoginDataModel {\r\n\r\n  public constructor() { }\r\n  id: number;\r\n  token: string;\r\n\r\n\r\n  getToken(): string {\r\n    return this.token;\r\n  }\r\n\r\n  setToken(token: string) {\r\n    this.token = token;\r\n  }\r\n\r\n  getId(): number {\r\n    return this.id;\r\n  }\r\n\r\n  setId(id: number) {\r\n    this.id = id;\r\n  }\r\n}",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [],
+                "line": 1,
+                "modifierKind": [
+                    114
+                ]
+            },
+            "properties": [
+                {
+                    "name": "id",
+                    "type": "number",
+                    "optional": false,
+                    "description": "",
+                    "line": 4
+                },
+                {
+                    "name": "token",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 5
+                }
+            ],
+            "methods": [
+                {
+                    "name": "getId",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "number",
+                    "typeParameters": [],
+                    "line": 16
+                },
+                {
+                    "name": "getToken",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "string",
+                    "typeParameters": [],
+                    "line": 8
+                },
+                {
+                    "name": "setId",
+                    "args": [
+                        {
+                            "name": "id",
+                            "type": "number"
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 20,
+                    "jsdoctags": [
+                        {
+                            "name": "id",
+                            "type": "number",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "setToken",
+                    "args": [
+                        {
+                            "name": "token",
+                            "type": "string"
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 12,
+                    "jsdoctags": [
+                        {
+                            "name": "token",
+                            "type": "string",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": []
+        },
+        {
+            "name": "LoginDataSuccess",
+            "id": "class-LoginDataSuccess-46b07d3bb753723e85e3cf286691d22c",
+            "file": "src/app/login-management/store/actions/login-management.action.ts",
+            "type": "class",
+            "sourceCode": "import { Action } from '@ngrx/store';\r\n\r\nexport const LOGIN_DATA = 'LOGIN_DATA'; \r\nexport const LOGIN_DATA_SUCCESS = 'LOGIN_DATA_SUCCESS';\r\nexport const LOGIN_DATA_FAIL = 'LOGIN_DATA_FAIL';\r\n\r\nexport class LoginData implements Action {\r\n    readonly type = LOGIN_DATA;\r\n    constructor() { }\r\n}\r\n\r\nexport class LoginDataSuccess implements Action {\r\n    readonly type = 'LOGIN_DATA_SUCCESS';\r\n    constructor(public payload: any) { }\r\n}\r\n\r\nexport class LoginDataFail implements Action {\r\n    readonly type = LOGIN_DATA_FAIL;\r\n    constructor(public payload: any) { }\r\n}\r\n\r\n\r\nexport type LoginManagementAction = LoginData | LoginDataSuccess | LoginDataFail;\r\n",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [
+                    {
+                        "name": "payload",
+                        "type": "any"
+                    }
+                ],
+                "line": 13,
+                "jsdoctags": [
+                    {
+                        "name": "payload",
+                        "type": "any",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "properties": [
+                {
+                    "name": "payload",
+                    "type": "any",
+                    "optional": false,
+                    "description": "",
+                    "line": 14,
+                    "modifierKind": [
+                        114
+                    ]
+                },
+                {
+                    "name": "type",
+                    "defaultValue": "'LOGIN_DATA_SUCCESS'",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 13,
+                    "modifierKind": [
+                        132
+                    ]
+                }
+            ],
+            "methods": [],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "implements": [
+                "Action"
+            ]
+        }
+    ],
+    "directives": [],
+    "components": [
+        {
+            "name": "AddUpdateInventoryComponent",
+            "id": "component-AddUpdateInventoryComponent-63b8f6e68c6a6a7186a534d55b327a47",
+            "file": "src/app/inventory-management/add-update-inventory/add-update-inventory.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-add-update-inventory",
+            "styleUrls": [
+                "./add-update-inventory.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./add-update-inventory.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [],
+            "methodsClass": [
+                {
+                    "name": "ngOnInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 12
+                }
+            ],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import { Component, OnInit } from '@angular/core';\n\n@Component({\n  selector: 'app-add-update-inventory',\n  templateUrl: './add-update-inventory.component.html',\n  styleUrls: ['./add-update-inventory.component.scss']\n})\nexport class AddUpdateInventoryComponent implements OnInit {\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "",
+                    "styleUrl": "./add-update-inventory.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [],
+                "line": 8
+            },
+            "implements": [
+                "OnInit"
+            ],
+            "templateData": "<p>add-update-inventory works!</p>\n"
+        },
+        {
+            "name": "AppComponent",
+            "id": "component-AppComponent-76e6616c1fc9587d63fd696344349b4b",
+            "file": "src/app/app.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-root",
+            "styleUrls": [
+                "./app.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./app.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "title",
+                    "defaultValue": "'sports-mania'",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 9
+                }
+            ],
+            "methodsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import { Component } from '@angular/core';\n\n@Component({\n  selector: 'app-root',\n  templateUrl: './app.component.html',\n  styleUrls: ['./app.component.scss']\n})\nexport class AppComponent {\n  title = 'sports-mania';\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": ".main  {\r\n    height: 100%;\r\n}\r\n",
+                    "styleUrl": "./app.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "templateData": "<div class=\"main\">\n  <router-outlet></router-outlet>\n\n</div>\n\n"
+        },
+        {
+            "name": "ButtonComponent",
+            "id": "component-ButtonComponent-642c6c4e474cd5a0ac760dfda26b2fc9",
+            "file": "src/stories/button.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "storybook-button",
+            "styleUrls": [
+                "./button.css"
+            ],
+            "styles": [],
+            "template": "<button   type=\"button\"\n   (click)=\"onClick.emit($event)\"\n   [ngClass]=\"classes\"\n   [ngStyle]=\"{ 'background-color': backgroundColor }\"\n >\n   {{ label }}\n </button>",
+            "templateUrl": [],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "backgroundColor",
+                    "description": "<p>What background color to use</p>\n",
+                    "line": 26,
+                    "type": "string"
+                },
+                {
+                    "name": "label",
+                    "defaultValue": "'Button'",
+                    "description": "<p>Button contents</p>\n",
+                    "line": 40
+                },
+                {
+                    "name": "primary",
+                    "defaultValue": "false",
+                    "description": "<p>Is this the principal call to action on the page?</p>\n",
+                    "line": 20
+                },
+                {
+                    "name": "size",
+                    "defaultValue": "'medium'",
+                    "description": "<p>How large should the button be?</p>\n",
+                    "line": 32,
+                    "type": "\"small\" | \"medium\" | \"large\""
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onClick",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "description": "<p>Optional click handler</p>\n",
+                    "line": 46,
+                    "type": "EventEmitter"
+                }
+            ],
+            "propertiesClass": [],
+            "methodsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import { Component, Input, Output, EventEmitter } from '@angular/core';\n\n@Component({\n  selector: 'storybook-button',\n  template: ` <button\n    type=\"button\"\n    (click)=\"onClick.emit($event)\"\n    [ngClass]=\"classes\"\n    [ngStyle]=\"{ 'background-color': backgroundColor }\"\n  >\n    {{ label }}\n  </button>`,\n  styleUrls: ['./button.css'],\n})\nexport default class ButtonComponent {\n  /**\n   * Is this the principal call to action on the page?\n   */\n  @Input()\n  primary = false;\n\n  /**\n   * What background color to use\n   */\n  @Input()\n  backgroundColor?: string;\n\n  /**\n   * How large should the button be?\n   */\n  @Input()\n  size: 'small' | 'medium' | 'large' = 'medium';\n\n  /**\n   * Button contents\n   *\n   * @required\n   */\n  @Input()\n  label = 'Button';\n\n  /**\n   * Optional click handler\n   */\n  @Output()\n  onClick = new EventEmitter<Event>();\n\n  public get classes(): string[] {\n    const mode = this.primary ? 'storybook-button--primary' : 'storybook-button--secondary';\n\n    return ['storybook-button', `storybook-button--${this.size}`, mode];\n  }\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": ".storybook-button {\n  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;\n  font-weight: 700;\n  border: 0;\n  border-radius: 3em;\n  cursor: pointer;\n  display: inline-block;\n  line-height: 1;\n}\n.storybook-button--primary {\n  color: white;\n  background-color: #1ea7fd;\n}\n.storybook-button--secondary {\n  color: #333;\n  background-color: transparent;\n  box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;\n}\n.storybook-button--small {\n  font-size: 12px;\n  padding: 10px 16px;\n}\n.storybook-button--medium {\n  font-size: 14px;\n  padding: 11px 20px;\n}\n.storybook-button--large {\n  font-size: 16px;\n  padding: 12px 24px;\n}\n",
+                    "styleUrl": "./button.css"
+                }
+            ],
+            "stylesData": "",
+            "accessors": {
+                "classes": {
+                    "name": "classes",
+                    "getSignature": {
+                        "name": "classes",
+                        "type": "[]",
+                        "returnType": "string[]",
+                        "line": 48
+                    }
+                }
+            }
+        },
+        {
+            "name": "ButtonComponent",
+            "id": "component-ButtonComponent-977e60d61136f5a92be7e9ac279b52a2-1",
+            "file": "src/app/inventory-management/shared/button/button.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-button",
+            "styleUrls": [
+                "./button.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./button.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "color",
+                    "line": 11,
+                    "type": "string"
+                },
+                {
+                    "name": "disabled",
+                    "line": 13,
+                    "type": "boolean"
+                },
+                {
+                    "name": "size",
+                    "line": 12,
+                    "type": "string"
+                },
+                {
+                    "name": "text",
+                    "line": 10,
+                    "type": "string"
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onClickTask",
+                    "defaultValue": "new EventEmitter()",
+                    "line": 15,
+                    "type": "EventEmitter<any>"
+                }
+            ],
+            "propertiesClass": [],
+            "methodsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import {Component, EventEmitter, Input, Output} from '@angular/core';\n@Component({\n  selector: 'app-button',\n  templateUrl: './button.component.html',\n  styleUrls: ['./button.component.scss']\n})\nexport class ButtonComponent {\n\n  constructor() { }\n  @Input() text: string;\n  @Input() color: string;\n  @Input() size: string;\n  @Input() disabled: boolean;\n  // tslint:disable-next-line: no-output-on-prefix\n  @Output() onClickTask: EventEmitter<any> = new EventEmitter();\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "",
+                    "styleUrl": "./button.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [],
+                "line": 7
+            },
+            "isDuplicate": true,
+            "duplicateId": 1,
+            "duplicateName": "ButtonComponent-1",
+            "templateData": "<button [disabled]=\"disabled\" class=\"pure-material-button-contained\" [style.background-color]=\"color\"\n    (click)=\"onClickTask.emit($event)\" >\n    {{text}}\n</button>"
+        },
+        {
+            "name": "HeaderComponent",
+            "id": "component-HeaderComponent-246e2a69dc126a3bd76c6328dd3b93e2",
+            "file": "src/stories/header.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "storybook-header",
+            "styleUrls": [
+                "./header.css"
+            ],
+            "styles": [],
+            "template": "<header>    <div class=\"wrapper\">\n      <div>\n        <svg width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" xmlns=\"http://www.w3.org/2000/svg\">\n          <g fill=\"none\" fillRule=\"evenodd\">\n            <path\n              d=\"M10 0h12a10 10 0 0110 10v12a10 10 0 01-10 10H10A10 10 0 010 22V10A10 10 0 0110 0z\"\n              fill=\"#FFF\"\n            />\n            <path\n              d=\"M5.3 10.6l10.4 6v11.1l-10.4-6v-11zm11.4-6.2l9.7 5.5-9.7 5.6V4.4z\"\n              fill=\"#555AB9\"\n            />\n            <path\n              d=\"M27.2 10.6v11.2l-10.5 6V16.5l10.5-6zM15.7 4.4v11L6 10l9.7-5.5z\"\n              fill=\"#91BAF8\"\n            />\n          </g>\n        </svg>\n        <h1>Acme</h1>\n      </div>\n      <div>\n        <storybook-button\n          *ngIf=\"user\"\n          size=\"small\"\n          (onClick)=\"onLogout.emit($event)\"\n          label=\"Log out\"\n        ></storybook-button>\n        <storybook-button\n          *ngIf=\"!user\"\n          size=\"small\"\n          (onClick)=\"onLogin.emit($event)\"\n          label=\"Log in\"\n        ></storybook-button>\n        <storybook-button\n          *ngIf=\"!user\"\n          primary\n          size=\"small\"\n          (onClick)=\"onCreateAccount.emit($event)\"\n          label=\"Sign up\"\n        ></storybook-button>\n      </div>\n    </div>\n  </header>",
+            "templateUrl": [],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "user",
+                    "defaultValue": "null",
+                    "line": 53,
+                    "type": "unknown"
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onCreateAccount",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "line": 62,
+                    "type": "EventEmitter"
+                },
+                {
+                    "name": "onLogin",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "line": 56,
+                    "type": "EventEmitter"
+                },
+                {
+                    "name": "onLogout",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "line": 59,
+                    "type": "EventEmitter"
+                }
+            ],
+            "propertiesClass": [],
+            "methodsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import { Component, Input, Output, EventEmitter } from '@angular/core';\n\n@Component({\n  selector: 'storybook-header',\n  template: `<header>\n    <div class=\"wrapper\">\n      <div>\n        <svg width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" xmlns=\"http://www.w3.org/2000/svg\">\n          <g fill=\"none\" fillRule=\"evenodd\">\n            <path\n              d=\"M10 0h12a10 10 0 0110 10v12a10 10 0 01-10 10H10A10 10 0 010 22V10A10 10 0 0110 0z\"\n              fill=\"#FFF\"\n            />\n            <path\n              d=\"M5.3 10.6l10.4 6v11.1l-10.4-6v-11zm11.4-6.2l9.7 5.5-9.7 5.6V4.4z\"\n              fill=\"#555AB9\"\n            />\n            <path\n              d=\"M27.2 10.6v11.2l-10.5 6V16.5l10.5-6zM15.7 4.4v11L6 10l9.7-5.5z\"\n              fill=\"#91BAF8\"\n            />\n          </g>\n        </svg>\n        <h1>Acme</h1>\n      </div>\n      <div>\n        <storybook-button\n          *ngIf=\"user\"\n          size=\"small\"\n          (onClick)=\"onLogout.emit($event)\"\n          label=\"Log out\"\n        ></storybook-button>\n        <storybook-button\n          *ngIf=\"!user\"\n          size=\"small\"\n          (onClick)=\"onLogin.emit($event)\"\n          label=\"Log in\"\n        ></storybook-button>\n        <storybook-button\n          *ngIf=\"!user\"\n          primary\n          size=\"small\"\n          (onClick)=\"onCreateAccount.emit($event)\"\n          label=\"Sign up\"\n        ></storybook-button>\n      </div>\n    </div>\n  </header>`,\n  styleUrls: ['./header.css'],\n})\nexport default class HeaderComponent {\n  @Input()\n  user: unknown = null;\n\n  @Output()\n  onLogin = new EventEmitter<Event>();\n\n  @Output()\n  onLogout = new EventEmitter<Event>();\n\n  @Output()\n  onCreateAccount = new EventEmitter<Event>();\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": ".wrapper {\n  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;\n  border-bottom: 1px solid rgba(0, 0, 0, 0.1);\n  padding: 15px 20px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n\nsvg {\n  display: inline-block;\n  vertical-align: top;\n}\n\nh1 {\n  font-weight: 900;\n  font-size: 20px;\n  line-height: 1;\n  margin: 6px 0 6px 10px;\n  display: inline-block;\n  vertical-align: top;\n}\n\nbutton + button {\n  margin-left: 10px;\n}\n",
+                    "styleUrl": "./header.css"
+                }
+            ],
+            "stylesData": ""
+        },
+        {
+            "name": "HeaderComponent",
+            "id": "component-HeaderComponent-bed8563b9ad03d1eacf6f165da6ff436-1",
+            "file": "src/app/inventory-management/shared/header/header.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-header",
+            "styleUrls": [
+                "./header.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./header.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "color",
+                    "defaultValue": "'primary'",
+                    "line": 10,
+                    "type": "\"primary\" | \"secondary\""
+                },
+                {
+                    "name": "href",
+                    "line": 11,
+                    "type": "string"
+                },
+                {
+                    "name": "target",
+                    "defaultValue": "'_self'",
+                    "line": 12,
+                    "type": "\"_self\" | \"_blank\" | \"_parent\" | \"_top\""
+                }
+            ],
+            "outputsClass": [],
+            "propertiesClass": [],
+            "methodsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import { Component, Input } from '@angular/core';\n\n@Component({\n  selector: 'app-header',\n  templateUrl: './header.component.html',\n  styleUrls: ['./header.component.scss']\n})\nexport class HeaderComponent {\n\n  @Input() color: 'primary' | 'secondary' = 'primary';\n  @Input() href: string;\n  @Input() target?: '_self' | '_blank' | '_parent' | '_top' = '_self';\n\n  public get classes(): Array<string> {\n    return ['link', `${this.color}-link`];\n  }\n  constructor() { }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "// link.component.scss\r\n.link {\r\n    text-decoration: none;\r\n    border-bottom: 1px dotted;\r\n    @media screen and (min-width: 600px) {\r\n      font-size: 1.15em;\r\n    }\r\n  }\r\n  .primary-link {\r\n    color: #ff4785;\r\n    border-color: #ff4785;\r\n  }\r\n  .secondary-link {\r\n    color: #1ea7fd;\r\n    border-color: #1ea7fd;\r\n  }",
+                    "styleUrl": "./header.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [],
+                "line": 16
+            },
+            "accessors": {
+                "classes": {
+                    "name": "classes",
+                    "getSignature": {
+                        "name": "classes",
+                        "type": "",
+                        "returnType": "Array<string>",
+                        "line": 14
+                    }
+                }
+            },
+            "isDuplicate": true,
+            "duplicateId": 1,
+            "duplicateName": "HeaderComponent-1",
+            "templateData": "// link.component.html\n<a\n  [ngClass]=\"classes\"\n  [href]=\"href\"\n  [target]=\"target\"\n>\n  <ng-content></ng-content>\n</a>"
+        },
+        {
+            "name": "ListInventoryComponent",
+            "id": "component-ListInventoryComponent-85a33af47cb57fb482133956df82eca7",
+            "file": "src/app/inventory-management/list-inventory/list-inventory.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-list-inventory",
+            "styleUrls": [
+                "./list-inventory.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./list-inventory.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "color",
+                    "defaultValue": "'#ffffff'",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 16
+                },
+                {
+                    "name": "disabled",
+                    "defaultValue": "false",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 15
+                },
+                {
+                    "name": "sportsInventory",
+                    "defaultValue": "[\n  {\n  'item_name': 'Racket',\n  'item_type':' Badminton',\n  'Quantity':' 34',\n  'Price': 100\n},\n{\n  'item_name': 'Racket',\n  'item_type': 'Badminton',\n  'Quantity': '34',\n  'Price': 100\n},\n{\n  'item_name': 'Bat',\n  'item_type': 'Cricket',\n  'Quantity': '78',\n  'Price': 600\n},\n{\n  'item_name': 'Stick',\n  'item_type': 'Hockey',\n  'Quantity': '12',\n  'Price': 50\n},\n{\n  'item_name': 'Racket',\n  'item_type': 'Badminton',\n  'Quantity':' 34',\n  'Price': 500\n},\n{\n  'item_name': 'Racket',\n  'item_type': 'Badminton',\n  'Quantity': '34',\n  'Price': 100\n},\n{\n  'item_name': 'Bat',\n  'item_type': 'Cricket',\n  'Quantity': '78',\n  'Price': 600\n},\n]",
+                    "type": "[]",
+                    "optional": false,
+                    "description": "",
+                    "line": 18
+                },
+                {
+                    "name": "text",
+                    "defaultValue": "'Add Products'",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 17
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "ngOnInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 64
+                }
+            ],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import {\n  Component,\n  OnInit,\n  ChangeDetectorRef,\n  OnDestroy,\n  HostListener,\n} from '@angular/core';\n\n@Component({\n  selector: 'app-list-inventory',\n  templateUrl: './list-inventory.component.html',\n  styleUrls: ['./list-inventory.component.scss']\n})\nexport class ListInventoryComponent implements OnInit {\n  disabled = false;\n  color = '#ffffff';\n  text = 'Add Products';\nsportsInventory = [\n  {\n  'item_name': 'Racket',\n  'item_type':' Badminton',\n  'Quantity':' 34',\n  'Price': 100\n},\n{\n  'item_name': 'Racket',\n  'item_type': 'Badminton',\n  'Quantity': '34',\n  'Price': 100\n},\n{\n  'item_name': 'Bat',\n  'item_type': 'Cricket',\n  'Quantity': '78',\n  'Price': 600\n},\n{\n  'item_name': 'Stick',\n  'item_type': 'Hockey',\n  'Quantity': '12',\n  'Price': 50\n},\n{\n  'item_name': 'Racket',\n  'item_type': 'Badminton',\n  'Quantity':' 34',\n  'Price': 500\n},\n{\n  'item_name': 'Racket',\n  'item_type': 'Badminton',\n  'Quantity': '34',\n  'Price': 100\n},\n{\n  'item_name': 'Bat',\n  'item_type': 'Cricket',\n  'Quantity': '78',\n  'Price': 600\n},\n]\n  constructor() { }\n\n  ngOnInit(): void {\n    console.log('fdf',this.sportsInventory)\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": ".item1 { \r\n    grid-area: header; \r\n    grid-area: 1 / 2 / 1 / 7;\r\n    height: 1rem;\r\n    box-shadow: 0 0.2rem 0.4rem 0 #e8ecf8;\r\n    position: fixed;\r\n    top: 0;\r\n    left: 15.2rem;\r\n    right: 0;\r\n    z-index: 10;\r\n    background: #fff;\r\n    padding: .8rem 3.6rem;\r\n    text-align: right;\r\n}\r\n\r\n.item2 { grid-area: menu; \r\n    grid-area: 1 / 1 / 9 / 1;\r\n    background: linear-gradient(\r\n        180deg\r\n        ,#0a0a5f 8%,#183590 85%);\r\n    }\r\n.item3 { \r\n    grid-area: 2/2/8/7;\r\n    padding-left: 3rem !important;\r\n    display: grid;\r\n    }\r\n.item4 { grid-area: footer;\r\n    grid-area: 8 / 2 / 8 / 7; \r\n    padding: 0rem !important;\r\n}\r\n\r\n.grid-container {\r\n    display: grid;\r\n    grid-template-areas:\r\n        \"menu header header header header header\"\r\n        \"menu main main main main main \"\r\n        \"menu footer footer footer footer footer\";\r\n    grid-template-rows: 5rem;\r\n    grid-gap: 0.4rem;\r\n    // background-color: #2196F3;\r\n    padding: 0rem 1rem 0rem 0rem;\r\n    height: 99.8%;\r\n    \r\n}\r\n\r\n.grid-container > div {\r\n    background-color: rgba(255, 255, 255, 0.8);\r\n    text-align: center;\r\n    padding: 20px 0;\r\n    font-size: 30px;\r\n}\r\nhtml,\r\nbody {\r\n\theight: 100%;\r\n}\r\n\r\nbody {\r\n\tmargin: 0;\r\n\tbackground: linear-gradient(45deg, #49a09d, #5f2c82);\r\n\tfont-family: sans-serif;\r\n\tfont-weight: 100;\r\n}\r\n\r\n.container {\r\n    display: grid;\r\n}\r\n\r\ntable {\r\n    width: 90%;\r\n    border-collapse: collapse;\r\n    overflow: hidden;\r\n    height: 100%;\r\n    box-shadow: 0 0 20px rgb(0 0 0 / 10%);\r\n}\r\n\r\nth,\r\ntd {\r\n\tpadding: 15px;\r\n\tbackground-color: rgba(255,255,255,0.2);\r\n\tcolor: black;\r\n}\r\n\r\n\r\nthead {\r\n    background-color: #e8ecf8;\r\n\tth {\r\n        font-size: 0.6em;\r\n        font-family: \"Open Sans Regular\";\r\n\t}\r\n}\r\n\r\ntbody {\r\n    position: relative;\r\n    font-size: 0.7em;\r\n\ttr {\r\n\t\t&:hover {\r\n            font-family: \"Open Sans Regular\";\r\n            color: #333;\r\n\t\t}\r\n\t}\r\n\ttd {\r\n\t\tposition: relative;\r\n        font-size: 0.7em;\r\n\t\t&:hover {\r\n\t\t\t&:before {\r\n\t\t\t\tcontent: \"\";\r\n\t\t\t\tposition: absolute;\r\n\t\t\t\tleft: 0;\r\n\t\t\t\tright: 0;\r\n\t\t\t\ttop: -9999px;\r\n\t\t\t\tbottom: -9999px;\r\n\t\t\t\tbackground-color: rgba(255,255,255,0.2);\r\n\t\t\t\tz-index: -1;\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n}\r\ntr:nth-child(even) {\r\n    background-color: #f2f2f2;\r\n}\r\n\r\n.icons {\r\n    padding-right: 0.7rem;\r\n\r\n    }\r\n    .edit-delete {\r\n        height: 25px;\r\n        width: 20px;\r\n    }\r\n\r\n.title{\r\n    font-weight: 500;\r\n    display: grid;\r\n    justify-content: flex-start;\r\n}",
+                    "styleUrl": "./list-inventory.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [],
+                "line": 61
+            },
+            "implements": [
+                "OnInit"
+            ],
+            "templateData": "<div class=\"grid-container\">\n    <div class=\"item1\">\n        <app-header></app-header>\n    </div>\n    <div class=\"item2\">Menu</div>\n    <div class=\"item3\">\n\n        <div class=\"container\">\n            <div class=\"title\">\n                Inventory List\n            </div>\n            <div>\n                <app-button [disabled] = 'disabled' [color] = 'color' [text] = 'text'></app-button>\n            </div>\n            <table>\n                <thead>\n                    <tr>\n                        <th>Name</th>\n                        <th>Type</th>\n                        <th>Quantity</th>\n                        <th>Price</th>\n                        <th>Action</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr *ngFor=\"let item of sportsInventory\">\n                        <td> {{item.item_name}}</td>\n                        <td>{{item.item_type}}</td>\n                        <td>{{item.Quantity}}</td>\n                        <td> {{item.Price}}</td>\n                        <td>\n                            <span class=\"icons\">\n                                <img class=\"edit-delete\" src=\"assets/edit.png\" alt=\"\" />\n                            </span>\n                            <span>\n                                <img class=\"edit-delete\" src=\"assets/delete.png\" alt=\"\" />\n                            </span>\n                        </td>\n\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n\n\n    </div>\n    <div class=\"item4\">Footer</div>\n</div>"
+        },
+        {
+            "name": "LoginComponent",
+            "id": "component-LoginComponent-3756150adce29d8f526aa7b9ada84f22",
+            "file": "src/app/login-management/login/login.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-login",
+            "styleUrls": [
+                "./login.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./login.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "appLevelConstant",
+                    "defaultValue": "constants",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 20
+                },
+                {
+                    "name": "checkPattern",
+                    "defaultValue": "checkPattern",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 19
+                },
+                {
+                    "name": "isLoginDone",
+                    "type": "any",
+                    "optional": false,
+                    "description": "",
+                    "line": 21
+                },
+                {
+                    "name": "loginForm",
+                    "type": "FormGroup",
+                    "optional": false,
+                    "description": "",
+                    "line": 18
+                },
+                {
+                    "name": "ngUnsubscribe",
+                    "defaultValue": "new Subject<void>()",
+                    "type": "Subject<void>",
+                    "optional": false,
+                    "description": "",
+                    "line": 22,
+                    "modifierKind": [
+                        114
+                    ]
+                },
+                {
+                    "name": "subscriptionStatus",
+                    "type": "any",
+                    "optional": false,
+                    "description": "",
+                    "line": 23
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "authenticateUser",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 62
+                },
+                {
+                    "name": "login",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 53
+                },
+                {
+                    "name": "ngOnInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 31
+                }
+            ],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import { Component, OnInit } from '@angular/core';\nimport { FormBuilder, FormGroup, Validators } from '@angular/forms';\nimport { Router } from '@angular/router';\nimport { checkPattern } from 'src/app/shared/patter-constants';\nimport { constants } from 'src/app/shared/constants';\nimport { LoginServiceService } from 'src/app/login-management/services/login-service.service';\nimport { startWith, map, takeUntil } from 'rxjs/operators';\nimport { Store } from '@ngrx/store';\nimport * as fromLoginManagementStore from '../store';\nimport { Observable, Subject } from 'rxjs';\n\n@Component({\n  selector: 'app-login',\n  templateUrl: './login.component.html',\n  styleUrls: ['./login.component.scss']\n})\nexport class LoginComponent implements OnInit {\n  loginForm: FormGroup;\n  checkPattern = checkPattern;\n  appLevelConstant = constants;\n  isLoginDone: any;\n  public ngUnsubscribe: Subject<void> = new Subject<void>();\n  subscriptionStatus: any;\n\n  constructor(private router: Router,\n    private formBuilder: FormBuilder,\n    private loginServiceService: LoginServiceService,\n    private loginManagementStore: Store<fromLoginManagementStore.LoginManagementDataState>,\n    ) { }\n\n  ngOnInit(): void {\n    if (localStorage.getItem('token')) {\n      this.router.navigateByUrl('list-inventory');\n    }\n    this.loginForm = this.formBuilder.group(\n      {\n        userName: ['', [\n          Validators.required,\n          Validators.pattern(this.checkPattern.EMAIL_VALIDATION),\n          Validators.minLength(3),\n        ]],\n        password: ['', [\n          Validators.required,\n          Validators.minLength(6),\n          Validators.maxLength(250),\n\n        ]],\n\n      }\n    );\n  }\n\n  login() {\n    if (this.loginForm.status === this.appLevelConstant.VALID) {\n      console.log(\"test\", this.loginForm);\n      this.loginServiceService.setUsername(this.loginForm.value.userName)\n      this.authenticateUser()\n    }\n  }\n\n  // Function to list department management table\n  authenticateUser() {\n    this.loginManagementStore.dispatch\n      (new fromLoginManagementStore.LoginData());\n    this.subscriptionStatus = this.loginManagementStore.select(fromLoginManagementStore.loadedLoginDataState).\n      pipe(takeUntil(this.ngUnsubscribe)).subscribe((loaded) => {\n        if (loaded) {\n          this.subscriptionStatus = this.loginManagementStore.select(fromLoginManagementStore.loadLoginDataState).\n            pipe(takeUntil(this.ngUnsubscribe)).subscribe((responseData) => {\n              if(responseData.getToken()){\n                this.router.navigateByUrl('list-inventory');\n                localStorage.setItem('token',responseData.getToken());\n              }\n              this.isLoginDone = true;\n            });\n          if (this.isLoginDone) {\n            this.subscriptionStatus.unsubscribe();\n          }\n        }\n      });\n    if (this.isLoginDone) {\n      this.subscriptionStatus.unsubscribe();\n    }\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": ".grid-container {\r\n    display: grid;\r\n    grid-template-rows: 20% 80%;\r\n    // grid-gap: 10px;  \r\n    // background-color: #2196F3;\r\n    // padding-top: 10px;\r\n    height: 100%;\r\n  }\r\n  \r\n  .grid-container > div {   \r\n    text-align: center;\r\n    // padding: 20px 0;\r\n    font-size: 30px;\r\n    justify-content: space-between;\r\n  }\r\n\r\n  .login-form {\r\n    // background-color: yellow;\r\n    display: flex;\r\n  }\r\n\r\n  .logo{\r\n    display: flex;\r\n    flex-basis: 20%;\r\n    align-items: center;\r\n    justify-content: center;\r\n    align-items: center;\r\n  }\r\n.logo-style{\r\n    height: 96px;\r\n}\r\n\r\n\r\n.main-backgroung-img{\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n//   .image{\r\n//     background-color: red;\r\n//   }\r\ninput{\r\n    border: 1px solid #fff;\r\n    padding: 1rem 1.2rem;\r\n    font-size: 1rem;\r\n    /* height: 4rem; */\r\n    width: 85%;\r\n    /* background: #e6eaf7; */\r\n    font-weight: 300;\r\n    color: #666;\r\n    background: 0 0;\r\n    border-radius: .5rem;\r\n\r\n}\r\n.input-boxes{\r\n    background: #e6eaf7;\r\n    border-radius: 5px; \r\n    box-shadow: 0 0 10px 0 rgb(199 34 42 / 26%);\r\n}\r\n\r\n\r\n.btn-default{\r\n    font-size: 0.95rem;\r\n    /* margin-left: 20px; */\r\n    /* line-height: 2.2rem; */\r\n    padding: 0.9rem 2.5rem;\r\n    font-weight: 600;\r\n    cursor: pointer;\r\n    color: white;\r\n    border-radius: 5px;\r\n    text-transform: uppercase;\r\n    background: #0a0a5f;\r\n    background: linear-gradient(\r\n271deg\r\n, #0a0a5f 0, #183590 100%);\r\n    filter: \"progid: DXImageTransform.Microsoft.gradient(startColorstr=\" #0a0a5f \", endColorstr=\" #183590 \", GradientType=1)\";\r\n    background-image: linear-gradient(\r\n97deg\r\n, #1c429e 3%, #0a0a5f 87%);\r\n}\r\n\r\n.btn-outline{\r\n    font-size: 0.95rem;\r\n    padding: .8rem 1.6rem;\r\n    border-radius: .5rem;\r\n    text-transform: uppercase;\r\n    cursor: pointer;\r\n    color: #0a0a5f;\r\n    font-weight: 700;\r\n    text-transform: uppercase;\r\n    background-color: unset;\r\n    border: unset;\r\n}\r\n\r\n.log-form-btn{\r\ndisplay: flex;\r\nflex-direction: column;\r\nalign-self: end;\r\npadding-bottom: 9px;\r\n}\r\n.form{\r\n    flex-basis: 78%;\r\n    display: grid;\r\n    align-items: center;\r\n    justify-content: flex-end;\r\n}\r\n@media only screen and (max-width: 480px) {\r\n.grid-container {\r\n        grid-template-rows: 33% 80%;\r\n}\r\n.form {\r\n    padding-top: 0.2rem;\r\n    grid-template-rows: auto auto auto auto;\r\n    grid-row-gap: 12px;\r\n}\r\n}\r\n@media only screen and (min-width: 481px) {\r\n.form{\r\n\r\n    grid-template-columns: auto auto auto auto;\r\n    grid-column-gap: 40px;\r\n}\r\n}",
+                    "styleUrl": "./login.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [
+                    {
+                        "name": "router",
+                        "type": "Router"
+                    },
+                    {
+                        "name": "formBuilder",
+                        "type": "FormBuilder"
+                    },
+                    {
+                        "name": "loginServiceService",
+                        "type": "LoginServiceService"
+                    },
+                    {
+                        "name": "loginManagementStore",
+                        "type": "Store<fromLoginManagementStore.LoginManagementDataState>"
+                    }
+                ],
+                "line": 23,
+                "jsdoctags": [
+                    {
+                        "name": "router",
+                        "type": "Router",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "formBuilder",
+                        "type": "FormBuilder",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "loginServiceService",
+                        "type": "LoginServiceService",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "loginManagementStore",
+                        "type": "Store<fromLoginManagementStore.LoginManagementDataState>",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "implements": [
+                "OnInit"
+            ],
+            "templateData": "<div class=\"grid-container\">\n    <div class=\"login-form\">\n        <div class=\"logo\">\n            <img class=\"logo-style\" src=\"assets/sports-logo.png\" alt=\"\" />\n        </div>\n        <form class=\"form\" [formGroup]=\"loginForm\">  \n        <!-- <div class=\"form\"> -->\n            <div class=\"input-boxes\">\n                <input placeholder=\"Email\" type=\"text\" formControlName=\"userName\" name=\"username\">\n\n            </div>\n            <div class=\"input-boxes\">\n                <input placeholder=\"Password\" type=\"text\" formControlName=\"password\" name=\"password\">\n            </div>\n            <div class=\"log-form-btn\">\n                <button class=\"btn-default\" (click) = \"login()\" type=\"button\">Login</button>\n                <button type=\"button\" disabled class=\"btn-outline\">SignUp</button>\n            </div>\n        <!-- </div> -->\n    </form>\n    </div>\n    \n    <div class=\"image\">\n        <img class=\"main-backgroung-img\" src=\"assets/sports-back-1.jpg\" alt=\"\" />\n    </div>\n</div>"
+        },
+        {
+            "name": "PageComponent",
+            "id": "component-PageComponent-cca1a8911321fa17756ce90c90de65cc",
+            "file": "src/stories/page.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "storybook-page",
+            "styleUrls": [
+                "./page.css"
+            ],
+            "styles": [],
+            "template": "<article>    <storybook-header\n      [user]=\"user\"\n      (onLogout)=\"onLogout.emit($event)\"\n      (onLogin)=\"onLogin.emit($event)\"\n      (onCreateAccount)=\"onCreateAccount.emit($event)\"\n    ></storybook-header>\n    <section>\n      <h2>Pages in Storybook</h2>\n      <p>\n        We recommend building UIs with a\n        <a href=\"https://componentdriven.org\" target=\"_blank\" rel=\"noopener noreferrer\">\n          <strong>component-driven</strong>\n        </a>\n        process starting with atomic components and ending with pages.\n      </p>\n      <p>\n        Render pages with mock data. This makes it easy to build and review page states without\n        needing to navigate to them in your app. Here are some handy patterns for managing page data\n        in Storybook:\n      </p>\n      <ul>\n        <li>\n          Use a higher-level connected component. Storybook helps you compose such data from the\n          \"args\" of child component stories\n        </li>\n        <li>\n          Assemble data in the page component from your services. You can mock these services out\n          using Storybook.\n        </li>\n      </ul>\n      <p>\n        Get a guided tutorial on component-driven development at\n        <a href=\"https://www.learnstorybook.com\" target=\"_blank\" rel=\"noopener noreferrer\">\n          Learn Storybook\n        </a>\n        . Read more in the\n        <a href=\"https://storybook.js.org/docs\" target=\"_blank\" rel=\"noopener noreferrer\">\n          docs\n        </a>\n        .\n      </p>\n      <div class=\"tip-wrapper\">\n        <span class=\"tip\">Tip</span> Adjust the width of the canvas with the\n        <svg width=\"10\" height=\"10\" viewBox=\"0 0 12 12\" xmlns=\"http://www.w3.org/2000/svg\">\n          <g fill=\"none\" fillRule=\"evenodd\">\n            <path\n              d=\"M1.5 5.2h4.8c.3 0 .5.2.5.4v5.1c-.1.2-.3.3-.4.3H1.4a.5.5 0 01-.5-.4V5.7c0-.3.2-.5.5-.5zm0-2.1h6.9c.3 0 .5.2.5.4v7a.5.5 0 01-1 0V4H1.5a.5.5 0 010-1zm0-2.1h9c.3 0 .5.2.5.4v9.1a.5.5 0 01-1 0V2H1.5a.5.5 0 010-1zm4.3 5.2H2V10h3.8V6.2z\"\n              id=\"a\"\n              fill=\"#999\"\n            />\n          </g>\n        </svg>\n        Viewports addon in the toolbar\n      </div>\n    </section>\n  </article>",
+            "templateUrl": [],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "user",
+                    "defaultValue": "null",
+                    "line": 66,
+                    "type": "unknown"
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onCreateAccount",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "line": 75,
+                    "type": "EventEmitter"
+                },
+                {
+                    "name": "onLogin",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "line": 69,
+                    "type": "EventEmitter"
+                },
+                {
+                    "name": "onLogout",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "line": 72,
+                    "type": "EventEmitter"
+                }
+            ],
+            "propertiesClass": [],
+            "methodsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import { Component, Input, Output, EventEmitter } from '@angular/core';\n\n@Component({\n  selector: 'storybook-page',\n  template: `<article>\n    <storybook-header\n      [user]=\"user\"\n      (onLogout)=\"onLogout.emit($event)\"\n      (onLogin)=\"onLogin.emit($event)\"\n      (onCreateAccount)=\"onCreateAccount.emit($event)\"\n    ></storybook-header>\n    <section>\n      <h2>Pages in Storybook</h2>\n      <p>\n        We recommend building UIs with a\n        <a href=\"https://componentdriven.org\" target=\"_blank\" rel=\"noopener noreferrer\">\n          <strong>component-driven</strong>\n        </a>\n        process starting with atomic components and ending with pages.\n      </p>\n      <p>\n        Render pages with mock data. This makes it easy to build and review page states without\n        needing to navigate to them in your app. Here are some handy patterns for managing page data\n        in Storybook:\n      </p>\n      <ul>\n        <li>\n          Use a higher-level connected component. Storybook helps you compose such data from the\n          \"args\" of child component stories\n        </li>\n        <li>\n          Assemble data in the page component from your services. You can mock these services out\n          using Storybook.\n        </li>\n      </ul>\n      <p>\n        Get a guided tutorial on component-driven development at\n        <a href=\"https://www.learnstorybook.com\" target=\"_blank\" rel=\"noopener noreferrer\">\n          Learn Storybook\n        </a>\n        . Read more in the\n        <a href=\"https://storybook.js.org/docs\" target=\"_blank\" rel=\"noopener noreferrer\">\n          docs\n        </a>\n        .\n      </p>\n      <div class=\"tip-wrapper\">\n        <span class=\"tip\">Tip</span> Adjust the width of the canvas with the\n        <svg width=\"10\" height=\"10\" viewBox=\"0 0 12 12\" xmlns=\"http://www.w3.org/2000/svg\">\n          <g fill=\"none\" fillRule=\"evenodd\">\n            <path\n              d=\"M1.5 5.2h4.8c.3 0 .5.2.5.4v5.1c-.1.2-.3.3-.4.3H1.4a.5.5 0 01-.5-.4V5.7c0-.3.2-.5.5-.5zm0-2.1h6.9c.3 0 .5.2.5.4v7a.5.5 0 01-1 0V4H1.5a.5.5 0 010-1zm0-2.1h9c.3 0 .5.2.5.4v9.1a.5.5 0 01-1 0V2H1.5a.5.5 0 010-1zm4.3 5.2H2V10h3.8V6.2z\"\n              id=\"a\"\n              fill=\"#999\"\n            />\n          </g>\n        </svg>\n        Viewports addon in the toolbar\n      </div>\n    </section>\n  </article>`,\n  styleUrls: ['./page.css'],\n})\nexport default class PageComponent {\n  @Input()\n  user: unknown = null;\n\n  @Output()\n  onLogin = new EventEmitter<Event>();\n\n  @Output()\n  onLogout = new EventEmitter<Event>();\n\n  @Output()\n  onCreateAccount = new EventEmitter<Event>();\n}\n\n// export const Page = ({ user, onLogin, onLogout, onCreateAccount }) => (\n//   <article>\n//     <Header user={user} onLogin={onLogin} onLogout={onLogout} onCreateAccount={onCreateAccount} />\n\n// );\n// Page.propTypes = {\n//   user: PropTypes.shape({}),\n//   onLogin: PropTypes.func.isRequired,\n//   onLogout: PropTypes.func.isRequired,\n//   onCreateAccount: PropTypes.func.isRequired,\n// };\n\n// Page.defaultProps = {\n//   user: null,\n// };\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "section {\n  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  line-height: 24px;\n  padding: 48px 20px;\n  margin: 0 auto;\n  max-width: 600px;\n  color: #333;\n}\n\nh2 {\n  font-weight: 900;\n  font-size: 32px;\n  line-height: 1;\n  margin: 0 0 4px;\n  display: inline-block;\n  vertical-align: top;\n}\n\np {\n  margin: 1em 0;\n}\n\na {\n  text-decoration: none;\n  color: #1ea7fd;\n}\n\nul {\n  padding-left: 30px;\n  margin: 1em 0;\n}\n\nli {\n  margin-bottom: 8px;\n}\n\n.tip {\n  display: inline-block;\n  border-radius: 1em;\n  font-size: 11px;\n  line-height: 12px;\n  font-weight: 700;\n  background: #e7fdd8;\n  color: #66bf3c;\n  padding: 4px 12px;\n  margin-right: 10px;\n  vertical-align: top;\n}\n\n.tip-wrapper {\n  font-size: 13px;\n  line-height: 20px;\n  margin-top: 40px;\n  margin-bottom: 40px;\n}\n\n.tip-wrapper svg {\n  display: inline-block;\n  height: 12px;\n  width: 12px;\n  margin-right: 4px;\n  vertical-align: top;\n  margin-top: 3px;\n}\n\n.tip-wrapper svg path {\n  fill: #1ea7fd;\n}\n",
+                    "styleUrl": "./page.css"
+                }
+            ],
+            "stylesData": ""
+        },
+        {
+            "name": "RegisterComponent",
+            "id": "component-RegisterComponent-73a7275b2eb33b11f15b05525e9c5799",
+            "file": "src/app/login-management/register/register.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-register",
+            "styleUrls": [
+                "./register.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./register.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [],
+            "methodsClass": [
+                {
+                    "name": "ngOnInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 12
+                }
+            ],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import { Component, OnInit } from '@angular/core';\n\n@Component({\n  selector: 'app-register',\n  templateUrl: './register.component.html',\n  styleUrls: ['./register.component.scss']\n})\nexport class RegisterComponent implements OnInit {\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "",
+                    "styleUrl": "./register.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [],
+                "line": 8
+            },
+            "implements": [
+                "OnInit"
+            ],
+            "templateData": "<p>register works!</p>\n"
+        }
+    ],
+    "modules": [
+        {
+            "name": "AppModule",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": [
+                        {
+                            "name": "AppComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "imports",
+                    "elements": [
+                        {
+                            "name": "AppRoutingModule"
+                        },
+                        {
+                            "name": "InventoryManagementModule"
+                        }
+                    ]
+                },
+                {
+                    "type": "exports",
+                    "elements": []
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": [
+                        {
+                            "name": "AppComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        },
+        {
+            "name": "AppRoutingModule",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": []
+                },
+                {
+                    "type": "imports",
+                    "elements": [
+                        {
+                            "name": "LoginManagementModule"
+                        }
+                    ]
+                },
+                {
+                    "type": "exports",
+                    "elements": []
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": []
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        },
+        {
+            "name": "InventoryManagementModule",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": [
+                        {
+                            "name": "AddUpdateInventoryComponent"
+                        },
+                        {
+                            "name": "ButtonComponent"
+                        },
+                        {
+                            "name": "HeaderComponent"
+                        },
+                        {
+                            "name": "ListInventoryComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "imports",
+                    "elements": []
+                },
+                {
+                    "type": "exports",
+                    "elements": []
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": []
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        },
+        {
+            "name": "LoginManagementModule",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": [
+                        {
+                            "name": "LoginComponent"
+                        },
+                        {
+                            "name": "RegisterComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "imports",
+                    "elements": []
+                },
+                {
+                    "type": "exports",
+                    "elements": []
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": []
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        }
+    ],
+    "miscellaneous": {
+        "variables": [
+            {
+                "name": "Base",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/stories.ts/header.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "checkPattern",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/patter-constants.ts",
+                "type": "object",
+                "defaultValue": "{\r\nEMAIL_VALIDATION: '^[a-zA-Z0-9._%+-]{1}[a-zA-Z0-9._%+-]*@[a-zA-Z0-9]{2}[a-zA-Z0-9]*.[a-zA-Z]{2}[a-zA-Z]*',\r\n}"
+            },
+            {
+                "name": "constants",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/constants.ts",
+                "type": "object",
+                "defaultValue": "{\r\n    VALID: 'VALID',\r\n    }"
+            },
+            {
+                "name": "context",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/test.ts",
+                "type": "",
+                "defaultValue": "require.context('./', true, /\\.spec\\.ts$/)"
+            },
+            {
+                "name": "effects",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/effects/index.ts",
+                "type": "any[]",
+                "defaultValue": "[LoginDataEffects]"
+            },
+            {
+                "name": "environment",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/environments/environment.prod.ts",
+                "type": "object",
+                "defaultValue": "{\n  production: true\n}"
+            },
+            {
+                "name": "environment",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/environments/environment.ts",
+                "type": "object",
+                "defaultValue": "{\n  production: false\n}"
+            },
+            {
+                "name": "getCMSState",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/reducers/index.ts",
+                "type": "",
+                "defaultValue": "createFeatureSelector<LoginManagementDataState>('loginManagementData')"
+            },
+            {
+                "name": "HTTP_OPTIONS",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/app-config.ts",
+                "type": "object",
+                "defaultValue": "{\r\n    headers: new HttpHeaders({\r\n        'Content-Type': 'application/json',\r\n        'Access-Control-Allow-Origin': '*',\r\n        'Access-Control-Allow-Methods': 'GET',\r\n    })\r\n}",
+                "description": "<p>Headers for POST API call</p>\n"
+            },
+            {
+                "name": "initialState",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "LoginDataState",
+                "defaultValue": "{\r\n    isLoginDataLoading: false,\r\n    isLoginDataLoaded: false,\r\n    loginData: new LoginDataModel(),\r\n}"
+            },
+            {
+                "name": "Large",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Button.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "loadedLoginDataState",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/selectors/login-management-selector.ts",
+                "type": "",
+                "defaultValue": "createSelector(\r\n    LoginDataState,\r\n    fromLoginData.LoginDataLoaded\r\n)"
+            },
+            {
+                "name": "loadingLoginDataState",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/selectors/login-management-selector.ts",
+                "type": "",
+                "defaultValue": "createSelector(\r\n    LoginDataState,\r\n    fromLoginData.LoginDataStateDataLoading\r\n)"
+            },
+            {
+                "name": "loadLoginDataState",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/selectors/login-management-selector.ts",
+                "type": "",
+                "defaultValue": "createSelector(\r\n    LoginDataState,\r\n    fromLoginData.LoginDataStateData\r\n)"
+            },
+            {
+                "name": "LoggedIn",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Header.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "LoggedIn",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Page.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "LoggedOut",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Header.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "LoggedOut",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Page.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "LOGIN_DATA",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/actions/login-management.action.ts",
+                "type": "string",
+                "defaultValue": "'LOGIN_DATA'"
+            },
+            {
+                "name": "LOGIN_DATA_FAIL",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/actions/login-management.action.ts",
+                "type": "string",
+                "defaultValue": "'LOGIN_DATA_FAIL'"
+            },
+            {
+                "name": "LOGIN_DATA_SUCCESS",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/actions/login-management.action.ts",
+                "type": "string",
+                "defaultValue": "'LOGIN_DATA_SUCCESS'"
+            },
+            {
+                "name": "LoginDataLoaded",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "",
+                "defaultValue": "(state: LoginDataState) => state.isLoginDataLoaded"
+            },
+            {
+                "name": "LoginDataState",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/selectors/login-management-selector.ts",
+                "type": "",
+                "defaultValue": "createSelector(\r\n    fromFeature.getCMSState,\r\n    (state: fromFeature.LoginManagementDataState) => state.login_data\r\n)"
+            },
+            {
+                "name": "LoginDataStateData",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "",
+                "defaultValue": "(state: LoginDataState) => state.loginData"
+            },
+            {
+                "name": "LoginDataStateDataLoading",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "",
+                "defaultValue": "(state: LoginDataState) => state.isLoginDataLoading"
+            },
+            {
+                "name": "metaReducers",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/reducers/index.ts",
+                "type": "MetaReducer[]",
+                "defaultValue": "!environment.production ? [] : []"
+            },
+            {
+                "name": "Primary",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Button.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "reducers",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/login-management/store/reducers/index.ts",
+                "type": "ActionReducerMap<LoginManagementDataState>",
+                "defaultValue": "{\r\n    login_data: fromLoginData.reducer,\r\n  }"
+            },
+            {
+                "name": "require",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/test.ts",
+                "type": "literal type"
+            },
+            {
+                "name": "ROUTE_API_URL",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/app-config.ts",
+                "type": "object",
+                "defaultValue": "{\r\n    MASTER_DATA_URL: 'api/masterData',\r\n    LOGIN_DATA_URL: 'http://localhost:3000/login',\r\n}"
+            },
+            {
+                "name": "Secondary",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Button.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "Small",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Button.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Button.stories.ts",
+                "type": "Story<Button>",
+                "defaultValue": "(args: Button) => ({\n  component: Button,\n  props: args,\n})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Header.stories.ts",
+                "type": "Story<Header>",
+                "defaultValue": "(args: Header) => ({\n  component: Header,\n  props: args,\n})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/stories/Page.stories.ts",
+                "type": "Story<Page>",
+                "defaultValue": "(args: Page) => ({\n  component: Page,\n  props: args,\n})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/stories.ts/header.stories.ts",
+                "type": "Story<HeaderComponent>",
+                "defaultValue": "() => ({\r\n    component: HeaderComponent,\r\n    props: {\r\n      color: 'primary',\r\n      content: 'Visit Storybook',\r\n      href: 'https://storybook.js.org/',\r\n      target: '_blank',\r\n    },\r\n//     template: `\r\n//       <app-header\r\n//         [color]=\"color\"\r\n//         [href]=\"href\"\r\n//         [target]=\"target\"\r\n//       >\r\n//         {{ content }}\r\n//       </app-header>`,\r\n  })"
+            }
+        ],
+        "functions": [
+            {
+                "name": "reducer",
+                "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "ctype": "miscellaneous",
+                "subtype": "function",
+                "description": "",
+                "args": [
+                    {
+                        "name": "state",
+                        "type": ""
+                    },
+                    {
+                        "name": "action"
+                    }
+                ],
+                "returnType": "LoginDataState",
+                "jsdoctags": [
+                    {
+                        "name": "state",
+                        "type": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "action",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            }
+        ],
+        "typealiases": [
+            {
+                "name": "LoginManagementAction",
+                "ctype": "miscellaneous",
+                "subtype": "typealias",
+                "rawtype": "LoginData | LoginDataSuccess | LoginDataFail",
+                "file": "src/app/login-management/store/actions/login-management.action.ts",
+                "description": "",
+                "kind": 168
+            }
+        ],
+        "enumerations": [],
+        "groupedVariables": {
+            "src/app/stories.ts/header.stories.ts": [
+                {
+                    "name": "Base",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/stories.ts/header.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/stories.ts/header.stories.ts",
+                    "type": "Story<HeaderComponent>",
+                    "defaultValue": "() => ({\r\n    component: HeaderComponent,\r\n    props: {\r\n      color: 'primary',\r\n      content: 'Visit Storybook',\r\n      href: 'https://storybook.js.org/',\r\n      target: '_blank',\r\n    },\r\n//     template: `\r\n//       <app-header\r\n//         [color]=\"color\"\r\n//         [href]=\"href\"\r\n//         [target]=\"target\"\r\n//       >\r\n//         {{ content }}\r\n//       </app-header>`,\r\n  })"
+                }
+            ],
+            "src/app/shared/patter-constants.ts": [
+                {
+                    "name": "checkPattern",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/patter-constants.ts",
+                    "type": "object",
+                    "defaultValue": "{\r\nEMAIL_VALIDATION: '^[a-zA-Z0-9._%+-]{1}[a-zA-Z0-9._%+-]*@[a-zA-Z0-9]{2}[a-zA-Z0-9]*.[a-zA-Z]{2}[a-zA-Z]*',\r\n}"
+                }
+            ],
+            "src/app/shared/constants.ts": [
+                {
+                    "name": "constants",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/constants.ts",
+                    "type": "object",
+                    "defaultValue": "{\r\n    VALID: 'VALID',\r\n    }"
+                }
+            ],
+            "src/test.ts": [
+                {
+                    "name": "context",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/test.ts",
+                    "type": "",
+                    "defaultValue": "require.context('./', true, /\\.spec\\.ts$/)"
+                },
+                {
+                    "name": "require",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/test.ts",
+                    "type": "literal type"
+                }
+            ],
+            "src/app/login-management/store/effects/index.ts": [
+                {
+                    "name": "effects",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/effects/index.ts",
+                    "type": "any[]",
+                    "defaultValue": "[LoginDataEffects]"
+                }
+            ],
+            "src/environments/environment.prod.ts": [
+                {
+                    "name": "environment",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/environments/environment.prod.ts",
+                    "type": "object",
+                    "defaultValue": "{\n  production: true\n}"
+                }
+            ],
+            "src/environments/environment.ts": [
+                {
+                    "name": "environment",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/environments/environment.ts",
+                    "type": "object",
+                    "defaultValue": "{\n  production: false\n}"
+                }
+            ],
+            "src/app/login-management/store/reducers/index.ts": [
+                {
+                    "name": "getCMSState",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/reducers/index.ts",
+                    "type": "",
+                    "defaultValue": "createFeatureSelector<LoginManagementDataState>('loginManagementData')"
+                },
+                {
+                    "name": "metaReducers",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/reducers/index.ts",
+                    "type": "MetaReducer[]",
+                    "defaultValue": "!environment.production ? [] : []"
+                },
+                {
+                    "name": "reducers",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/reducers/index.ts",
+                    "type": "ActionReducerMap<LoginManagementDataState>",
+                    "defaultValue": "{\r\n    login_data: fromLoginData.reducer,\r\n  }"
+                }
+            ],
+            "src/app/shared/app-config.ts": [
+                {
+                    "name": "HTTP_OPTIONS",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/app-config.ts",
+                    "type": "object",
+                    "defaultValue": "{\r\n    headers: new HttpHeaders({\r\n        'Content-Type': 'application/json',\r\n        'Access-Control-Allow-Origin': '*',\r\n        'Access-Control-Allow-Methods': 'GET',\r\n    })\r\n}",
+                    "description": "<p>Headers for POST API call</p>\n"
+                },
+                {
+                    "name": "ROUTE_API_URL",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/app-config.ts",
+                    "type": "object",
+                    "defaultValue": "{\r\n    MASTER_DATA_URL: 'api/masterData',\r\n    LOGIN_DATA_URL: 'http://localhost:3000/login',\r\n}"
+                }
+            ],
+            "src/app/login-management/store/reducers/login-management-reducer.ts": [
+                {
+                    "name": "initialState",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                    "type": "LoginDataState",
+                    "defaultValue": "{\r\n    isLoginDataLoading: false,\r\n    isLoginDataLoaded: false,\r\n    loginData: new LoginDataModel(),\r\n}"
+                },
+                {
+                    "name": "LoginDataLoaded",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                    "type": "",
+                    "defaultValue": "(state: LoginDataState) => state.isLoginDataLoaded"
+                },
+                {
+                    "name": "LoginDataStateData",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                    "type": "",
+                    "defaultValue": "(state: LoginDataState) => state.loginData"
+                },
+                {
+                    "name": "LoginDataStateDataLoading",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                    "type": "",
+                    "defaultValue": "(state: LoginDataState) => state.isLoginDataLoading"
+                }
+            ],
+            "src/stories/Button.stories.ts": [
+                {
+                    "name": "Large",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Button.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Primary",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Button.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Secondary",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Button.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Small",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Button.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Button.stories.ts",
+                    "type": "Story<Button>",
+                    "defaultValue": "(args: Button) => ({\n  component: Button,\n  props: args,\n})"
+                }
+            ],
+            "src/app/login-management/store/selectors/login-management-selector.ts": [
+                {
+                    "name": "loadedLoginDataState",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/selectors/login-management-selector.ts",
+                    "type": "",
+                    "defaultValue": "createSelector(\r\n    LoginDataState,\r\n    fromLoginData.LoginDataLoaded\r\n)"
+                },
+                {
+                    "name": "loadingLoginDataState",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/selectors/login-management-selector.ts",
+                    "type": "",
+                    "defaultValue": "createSelector(\r\n    LoginDataState,\r\n    fromLoginData.LoginDataStateDataLoading\r\n)"
+                },
+                {
+                    "name": "loadLoginDataState",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/selectors/login-management-selector.ts",
+                    "type": "",
+                    "defaultValue": "createSelector(\r\n    LoginDataState,\r\n    fromLoginData.LoginDataStateData\r\n)"
+                },
+                {
+                    "name": "LoginDataState",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/selectors/login-management-selector.ts",
+                    "type": "",
+                    "defaultValue": "createSelector(\r\n    fromFeature.getCMSState,\r\n    (state: fromFeature.LoginManagementDataState) => state.login_data\r\n)"
+                }
+            ],
+            "src/stories/Header.stories.ts": [
+                {
+                    "name": "LoggedIn",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Header.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "LoggedOut",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Header.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Header.stories.ts",
+                    "type": "Story<Header>",
+                    "defaultValue": "(args: Header) => ({\n  component: Header,\n  props: args,\n})"
+                }
+            ],
+            "src/stories/Page.stories.ts": [
+                {
+                    "name": "LoggedIn",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Page.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "LoggedOut",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Page.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/stories/Page.stories.ts",
+                    "type": "Story<Page>",
+                    "defaultValue": "(args: Page) => ({\n  component: Page,\n  props: args,\n})"
+                }
+            ],
+            "src/app/login-management/store/actions/login-management.action.ts": [
+                {
+                    "name": "LOGIN_DATA",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/actions/login-management.action.ts",
+                    "type": "string",
+                    "defaultValue": "'LOGIN_DATA'"
+                },
+                {
+                    "name": "LOGIN_DATA_FAIL",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/actions/login-management.action.ts",
+                    "type": "string",
+                    "defaultValue": "'LOGIN_DATA_FAIL'"
+                },
+                {
+                    "name": "LOGIN_DATA_SUCCESS",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/login-management/store/actions/login-management.action.ts",
+                    "type": "string",
+                    "defaultValue": "'LOGIN_DATA_SUCCESS'"
+                }
+            ]
+        },
+        "groupedFunctions": {
+            "src/app/login-management/store/reducers/login-management-reducer.ts": [
+                {
+                    "name": "reducer",
+                    "file": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                    "ctype": "miscellaneous",
+                    "subtype": "function",
+                    "description": "",
+                    "args": [
+                        {
+                            "name": "state",
+                            "type": ""
+                        },
+                        {
+                            "name": "action"
+                        }
+                    ],
+                    "returnType": "LoginDataState",
+                    "jsdoctags": [
+                        {
+                            "name": "state",
+                            "type": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "action",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "groupedEnumerations": {},
+        "groupedTypeAliases": {
+            "src/app/login-management/store/actions/login-management.action.ts": [
+                {
+                    "name": "LoginManagementAction",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "LoginData | LoginDataSuccess | LoginDataFail",
+                    "file": "src/app/login-management/store/actions/login-management.action.ts",
+                    "description": "",
+                    "kind": 168
+                }
+            ]
+        }
+    },
+    "routes": {
+        "name": "<root>",
+        "kind": "module",
+        "className": "AppModule",
+        "children": [
+            {
+                "name": "routes",
+                "filename": "src/app/app-routing.module.ts",
+                "module": "AppRoutingModule",
+                "children": [
+                    {
+                        "path": "",
+                        "pathMatch": "full",
+                        "redirectTo": "login"
+                    },
+                    {
+                        "path": "login",
+                        "component": "LoginManagementModule"
+                    },
+                    {
+                        "path": "list-inventory",
+                        "component": "ListInventoryComponent"
+                    }
+                ],
+                "kind": "module"
+            },
+            {
+                "name": "ROUTES",
+                "filename": "src/app/login-management/login-management.module.ts",
+                "module": "LoginManagementModule",
+                "children": [
+                    {
+                        "path": "",
+                        "pathMatch": "full",
+                        "redirectTo": "login"
+                    },
+                    {
+                        "path": "login",
+                        "component": "LoginComponent"
+                    }
+                ],
+                "kind": "module"
+            }
+        ]
+    },
+    "coverage": {
+        "count": 3,
+        "status": "low",
+        "files": [
+            {
+                "filePath": "e2e/src/app.po.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "AppPage",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/app.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "AppComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/inventory-management/add-update-inventory/add-update-inventory.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "AddUpdateInventoryComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/inventory-management/list-inventory/list-inventory.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "ListInventoryComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/7",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/inventory-management/shared/button/button.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "ButtonComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/7",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/inventory-management/shared/header/header.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "HeaderComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/5",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/login/login.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "LoginComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/11",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/models.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "LoginDataModel",
+                "coveragePercent": 0,
+                "coverageCount": "0/8",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/register/register.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "RegisterComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/services/login-service.service.ts",
+                "type": "injectable",
+                "linktype": "injectable",
+                "name": "LoginServiceService",
+                "coveragePercent": 0,
+                "coverageCount": "0/6",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/actions/login-management.action.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "LoginData",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/actions/login-management.action.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "LoginDataFail",
+                "coveragePercent": 0,
+                "coverageCount": "0/4",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/actions/login-management.action.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "LoginDataSuccess",
+                "coveragePercent": 0,
+                "coverageCount": "0/4",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/actions/login-management.action.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LOGIN_DATA",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/actions/login-management.action.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LOGIN_DATA_FAIL",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/actions/login-management.action.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LOGIN_DATA_SUCCESS",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/effects/index.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "effects",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/effects/login-management-effect.ts",
+                "type": "injectable",
+                "linktype": "injectable",
+                "name": "LoginDataEffects",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/index.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "LoginManagementDataState",
+                "coveragePercent": 0,
+                "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/index.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "getCMSState",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/index.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "metaReducers",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/index.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "reducers",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "LoginDataState",
+                "coveragePercent": 0,
+                "coverageCount": "0/4",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "function",
+                "linksubtype": "function",
+                "name": "reducer",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "initialState",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LoginDataLoaded",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LoginDataStateData",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/reducers/login-management-reducer.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LoginDataStateDataLoading",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/selectors/login-management-selector.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "loadedLoginDataState",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/selectors/login-management-selector.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "loadingLoginDataState",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/selectors/login-management-selector.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "loadLoginDataState",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/login-management/store/selectors/login-management-selector.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LoginDataState",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/app-config.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "HTTP_OPTIONS",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "src/app/shared/app-config.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "ROUTE_API_URL",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/constants.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "constants",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/patter-constants.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "checkPattern",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/stories.ts/header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Base",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/stories.ts/header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/environments/environment.prod.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "environment",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/environments/environment.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "environment",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Large",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Primary",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Secondary",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Small",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LoggedIn",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LoggedOut",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Page.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LoggedIn",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Page.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LoggedOut",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/Page.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/button.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "ButtonComponent",
+                "coveragePercent": 83,
+                "coverageCount": "5/6",
+                "status": "very-good"
+            },
+            {
+                "filePath": "src/stories/header.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "HeaderComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/5",
+                "status": "low"
+            },
+            {
+                "filePath": "src/stories/page.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "PageComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/5",
+                "status": "low"
+            },
+            {
+                "filePath": "src/test.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "context",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/test.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "require",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            }
+        ]
+    }
+}
