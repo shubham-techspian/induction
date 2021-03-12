@@ -19,11 +19,11 @@ export class LoginServiceService {
     return this.loginPayload.userName;
   }
 
-  setUsername(userName: string) {
+  setUsername(userName: string): any {
     this.loginPayload.userName = userName;
   }
   authenticateUser() {
-    const id = 1
+    const id = 1;
     return this.http.get(ROUTE_API_URL.LOGIN_DATA_URL +'/'+id, HTTP_OPTIONS);
   }
 }

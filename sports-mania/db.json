@@ -8,5 +8,58 @@
     "contact":"9664847530",
     "token":"test"
 }
-]
+],
+"sportsInventory" : [
+    {
+    "id": 1,
+    "item_name": "Racket",
+    "item_type":" Badminton",
+    "Quantity":" 34",
+    "Price": 100
+  },
+  {
+"id": 2,
+    "item_name": "Racket",
+    "item_type": "Badminton",
+    "Quantity": "34",
+    "Price": 100
+  },
+  {
+"id": 3,
+    "item_name": "Bat",
+    "item_type": "Cricket",
+    "Quantity": "78",
+    "Price": 600
+  },
+  {
+"id": 4,
+    "item_name": "Stick",
+    "item_type": "Hockey",
+    "Quantity": "12",
+    "Price": 50
+  },
+  {
+"id": 5,
+    "item_name": "Racket",
+    "item_type": "Badminton",
+    "Quantity":" 34",
+    "Price": 500
+  },
+
+  {
+"id": 6,
+    "item_name": "Racket",
+    "item_type": "Badminton",
+    "Quantity": "34",
+    "Price": 100
+  },
+  {
+    "id": 7,
+    "item_name": "Bat",
+    "item_type": "Cricket",
+    "Quantity": "78",
+    "Price": 600
+  }
+  ]
+
 }

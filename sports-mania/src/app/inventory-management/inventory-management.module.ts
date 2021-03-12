@@ -5,9 +5,10 @@ import { AddUpdateInventoryComponent } from './add-update-inventory/add-update-i
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './shared/header/header.component';
 import { ButtonComponent } from './shared/button/button.component';
+import { PopupComponent } from './shared/popup/popup.component';
 
 @NgModule({
-  declarations: [ListInventoryComponent, AddUpdateInventoryComponent, HeaderComponent, ButtonComponent],
+  declarations: [ListInventoryComponent, AddUpdateInventoryComponent, HeaderComponent, ButtonComponent, PopupComponent],
   imports: [
     CommonModule,
     BrowserAnimationsModule

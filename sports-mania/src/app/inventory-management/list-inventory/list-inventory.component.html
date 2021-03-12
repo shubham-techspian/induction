@@ -23,7 +23,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let item of sportsInventory">
+                    <tr *ngFor="let item of tableData">
                         <td> {{item.item_name}}</td>
                         <td>{{item.item_type}}</td>
                         <td>{{item.Quantity}}</td>
@@ -33,7 +33,7 @@
                                 <img class="edit-delete" src="assets/edit.png" alt="" />
                             </span>
                             <span>
-                                <img class="edit-delete" src="assets/delete.png" alt="" />
+                                <img class="edit-delete" src="assets/delete.png" (click) = toggleDeletePopup(item) alt="" />
                             </span>
                         </td>
 
@@ -46,3 +46,5 @@
     </div>
     <div class="item4">Footer</div>
 </div>
+
+<app-popup (action) = "popupAction($event)" [popupContent] = "popupContent" [showPopup] ="showPopup" > </app-popup>

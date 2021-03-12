@@ -1,0 +1,15 @@
+
+<div *ngIf="showPopup" class="modal" [ngStyle]="{ 'background-color': backgroundColor }">
+  <span  class="close" title="Close Modal"></span>
+  <div class="modal-content" >
+    <div class="container">
+      <h5>{{popupTitle}}</h5>
+      <p>Are you sure you want to delete {{popupContent}}?</p>
+
+      <div  class="clearfix" >
+        <button type="button" class="cancelbtn" (click) = "popupAction('cancel')">Cancel</button>
+        <button type="button" class="deletebtn" (click) = "popupAction('delete')">Delete</button>
+      </div>
+    </div>
+</div>
+</div>

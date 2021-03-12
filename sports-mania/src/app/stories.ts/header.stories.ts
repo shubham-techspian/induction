@@ -19,8 +19,8 @@ export default {
 const Template: Story<HeaderComponent> = () => ({
     component: HeaderComponent,
     props: {
-      color: 'primary',
-      content: 'Visit Storybook',
+      color: select('Color', ['primary', 'secondary'] , 'primary'),
+      content: text('Text', 'Visit Storybooks'),
       href: 'https://storybook.js.org/',
       target: '_blank',
     },

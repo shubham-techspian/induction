@@ -1,10 +1,6 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  OnDestroy,
-  HostListener,
-} from '@angular/core';
+import { Component, OnInit,} from '@angular/core';
+import { ListInventoryServiceService } from 'src/app/inventory-management/services/list-inventory-service.service';
+import { Observable, } from 'rxjs';
 
 @Component({
   selector: 'app-list-inventory',
@@ -15,54 +11,53 @@ export class ListInventoryComponent implements OnInit {
   disabled = false;
   color = '#ffffff';
   text = 'Add Products';
-sportsInventory = [
-  {
-  'item_name': 'Racket',
-  'item_type':' Badminton',
-  'Quantity':' 34',
-  'Price': 100
-},
-{
-  'item_name': 'Racket',
-  'item_type': 'Badminton',
-  'Quantity': '34',
-  'Price': 100
-},
-{
-  'item_name': 'Bat',
-  'item_type': 'Cricket',
-  'Quantity': '78',
-  'Price': 600
-},
-{
-  'item_name': 'Stick',
-  'item_type': 'Hockey',
-  'Quantity': '12',
-  'Price': 50
-},
-{
-  'item_name': 'Racket',
-  'item_type': 'Badminton',
-  'Quantity':' 34',
-  'Price': 500
-},
-{
-  'item_name': 'Racket',
-  'item_type': 'Badminton',
-  'Quantity': '34',
-  'Price': 100
-},
-{
-  'item_name': 'Bat',
-  'item_type': 'Cricket',
-  'Quantity': '78',
-  'Price': 600
-},
-]
-  constructor() { }
+  sportsInventory = [];
+  tableData: any;
+  displayMessage: string;
+  totalRecords: number;
+  isDelete = false;
+  popupContent: any;
+  showPopup: boolean;
+
+  constructor(
+    private listInventoryServiceService : ListInventoryServiceService
+  ) { }
 
   ngOnInit(): void {
-    console.log('fdf',this.sportsInventory)
+    this.loadInventoryList();
   }
 
+  loadInventoryList(): void{
+    this.listInventoryServiceService.getInventoryData().subscribe(
+      (response) => {
+        if (response) {
+          console.log(response);
+          this.tableData = response;
+          if (this.tableData.length) {
+            this.totalRecords = this.tableData.length;
+          }
+        } else {
+          this.displayMessage = 'No Records Found';
+          this.tableData = [];
+          this.totalRecords = 0;
+        }
+      },
+      (
+        error
+      ) => (
+           console.log('error', error)
+        )
+    );
+  }
+  toggleDeletePopup(rowItem): void{
+    this.showPopup = this.showPopup ? false : true;
+    this.popupContent = rowItem.item_name;
+    console.log(this.showPopup);
+  }
+  // tslint:disable-next-line: typedef
+  popupAction(actionType){
+    console.log(actionType);
+    this.showPopup = this.showPopup ? false : true;
+
+  }
 }

@@ -18,20 +18,24 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   checkPattern = checkPattern;
   appLevelConstant = constants;
-  isLoginDone: any;
+  isLoginDone = false;
   public ngUnsubscribe: Subject<void> = new Subject<void>();
   subscriptionStatus: any;
 
   constructor(private router: Router,
-    private formBuilder: FormBuilder,
-    private loginServiceService: LoginServiceService,
-    private loginManagementStore: Store<fromLoginManagementStore.LoginManagementDataState>,
+              private formBuilder: FormBuilder,
+              public loginServiceService: LoginServiceService,
+              private loginManagementStore: Store<fromLoginManagementStore.LoginManagementDataState>,
     ) { }
 
   ngOnInit(): void {
     if (localStorage.getItem('token')) {
       this.router.navigateByUrl('list-inventory');
     }
+    this.createForm();
+  }
+
+  createForm(): void{
     this.loginForm = this.formBuilder.group(
       {
         userName: ['', [
@@ -54,7 +58,7 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.status === this.appLevelConstant.VALID) {
       console.log("test", this.loginForm);
       this.loginServiceService.setUsername(this.loginForm.value.userName)
-      this.authenticateUser()
+      this.authenticateUser();
     }
   }
 
